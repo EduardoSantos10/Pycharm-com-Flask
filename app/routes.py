@@ -25,7 +25,8 @@ def cadastrarUsuario():
         nome = request.form.get("nome")
         telefone = request.form.get("telefone")
         endereco = request.form.get("endereco")
-        dados = {"cpf":cpf, "nome":nome, "telefone":telefone, "endereco":endereco}
+        extrair = request.form.get("extrair")
+        dados = {"cpf":cpf, "nome":nome, "telefone":telefone, "endereco":endereco, "extrair":extrair}
         requisicao = requests.post(f'{link}/cadastrar/.json', data = json.dumps(dados))
         return 'Cadastro com sucesso!'
     except Exception as e:
@@ -35,7 +36,7 @@ def cadastrarUsuario():
 def listarTudo():
     try:
         requisicao = requests.get(f'{link}/cadastrar/.json') #solicitação dos dados
-        dicionario =  requisicao.json()
+        dicionario = requisicao.json()
         return dicionario
 
     except Exception as e:
@@ -60,6 +61,7 @@ def atualizar():
     try:
         dados = {""}
         requisicao = requests.patch(f'{link}/cadastrar/-O8JiDnoFjBpS88K7HVy/.json', data=json.dumps(dados))
+        dicionario = requisicao.json()
         return "Atualizado com sucesso!"
     except Exception as e:
         return f'Algo deu errado\n\n {e}'
@@ -73,16 +75,15 @@ def excluir():
         return f'Algo deu errado\n\n {e}'
 
 @app.route('/extrair')
-def extrair(methods=['POST']):
+def extrair():
     try:
-
-        requisicao = requests.get(f'{link}/cadastrar/.json')  # solicitar
-        dicionario = requisicao.json()
-        idCadastro = ""  # Armazenar o ID individual de cada um
+        extrair = requests.get(f'{link}/listar/-O8no3w7jn9DWwYVFndo/.json')
+        dicionario = extrair.json()
+        idConsulta = " "
         for codigo in dicionario:
-            chave = dicionario[codigo]['cpf']
-            if chave == {'13579'}:
-                idCadastro = codigo
-                return idCadastro
+            chave = dicionario[codigo]['extrair']
+            if chave == {'codigo'}:
+                idConsulta = codigo
+                return idConsulta
     except Exception as e:
         return f'Algo deu errado \n\n{e}'
